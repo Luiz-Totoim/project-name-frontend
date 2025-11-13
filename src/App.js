@@ -4,40 +4,61 @@ import SearchBar from './components/SearchBar';
 import Card from './components/Card';
 import Modal from './components/Modal';
 import Button from './components/Button';
+import Preloader from './components/Preloader';
+import { fetchNews } from './services/newsApi';
 import './App.css';
 
 export default function App() {
-  const sample = [
-    {
-      title: 'Exemplo de notícia 1',
-      description: 'Resumo curto da notícia 1',
-      source: { name: 'Fonte 1' },
-      url: 'https://example.com/1',
-      urlToImage: '',
-      publishedAt: new Date().toISOString()
-    }
-  ];
-
-  function handleSearch(q){
-    // placeholder: será implementado na Etapa 2 (API)
-    console.log('Pesquisar:', q);
-  }
-
+  const [articles, setArticles] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState('');
+  const [lastQuery, setLastQuery] = React.useState('');
+  const abortRef = React.useRef();
   const [openDemo, setOpenDemo] = React.useState(false);
+
+  async function handleSearch(q){
+    if(!q) return; // validação já acontece em SearchBar
+    setLastQuery(q);
+    setError('');
+    setLoading(true);
+    setArticles([]);
+    if(abortRef.current) abortRef.current.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+    try {
+      const data = await fetchNews(q, { signal: controller.signal });
+      setArticles(data);
+      if(data.length === 0) {
+        setError('Nada encontrado');
+      }
+    } catch (err) {
+      if(err.name !== 'AbortError') {
+        console.error(err);
+        setError(err.message || 'Erro ao buscar dados');
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="app">
       <a href="#conteudo" className="skiplink">Ir para conteúdo</a>
       <Header />
       <main id="conteudo" tabIndex={-1}>
-        <h1 className="app__title">NewsExplorer — Etapa 1</h1>
+        <h1 className="app__title">NewsExplorer — Etapa 2</h1>
         <SearchBar onSearch={handleSearch} />
         <div className="demo-actions">
           <Button variant="ghost" onClick={()=> setOpenDemo(true)}>Abrir Modal de Exemplo</Button>
         </div>
+        {loading && <Preloader />}
+        {error && !loading && <div className="results__status" role="alert">{error}</div>}
         <section className="results" aria-live="polite" aria-label="Resultados da busca">
-          {sample.map((a,i)=> <Card key={i} article={a} />)}
+          {!loading && !error && articles.map((a,i)=> <Card key={i} article={a} />)}
         </section>
+        {!loading && !error && articles.length > 0 && (
+          <div className="results__count" aria-label="Total de resultados">{articles.length} resultado(s)</div>
+        )}
       </main>
       <footer className="app__footer" role="contentinfo">
         <small>&copy; {new Date().getFullYear()} NewsExplorer Demo</small>
