@@ -6,6 +6,7 @@ import Modal from './components/Modal';
 import Button from './components/Button';
 import Preloader from './components/Preloader';
 import { fetchNews } from './services/newsApi';
+import { VISIBLE_CHUNK } from './config/constants';
 import './App.css';
 
 export default function App() {
@@ -15,6 +16,7 @@ export default function App() {
   const [lastQuery, setLastQuery] = React.useState('');
   const abortRef = React.useRef();
   const [openDemo, setOpenDemo] = React.useState(false);
+  const [visibleCount, setVisibleCount] = React.useState(VISIBLE_CHUNK);
 
   async function handleSearch(q){
     if(!q) return; // validação já acontece em SearchBar
@@ -22,6 +24,7 @@ export default function App() {
     setError('');
     setLoading(true);
     setArticles([]);
+    setVisibleCount(VISIBLE_CHUNK);
     if(abortRef.current) abortRef.current.abort();
     const controller = new AbortController();
     abortRef.current = controller;
@@ -54,10 +57,17 @@ export default function App() {
         {loading && <Preloader />}
         {error && !loading && <div className="results__status" role="alert">{error}</div>}
         <section className="results" aria-live="polite" aria-label="Resultados da busca">
-          {!loading && !error && articles.map((a,i)=> <Card key={i} article={a} />)}
+          {!loading && !error && articles.slice(0, visibleCount).map((a,i)=> <Card key={i} article={a} />)}
         </section>
         {!loading && !error && articles.length > 0 && (
           <div className="results__count" aria-label="Total de resultados">{articles.length} resultado(s)</div>
+        )}
+        {!loading && !error && articles.length > visibleCount && (
+          <div className="loadmore">
+            <Button onClick={()=> setVisibleCount(c=> Math.min(c + VISIBLE_CHUNK, articles.length))}>
+              Mostrar mais
+            </Button>
+          </div>
         )}
       </main>
       <footer className="app__footer" role="contentinfo">
