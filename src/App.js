@@ -27,17 +27,21 @@ export default function App() {
 
   return (
     <div className="app">
+      <a href="#conteudo" className="skiplink">Ir para conteúdo</a>
       <Header />
-      <main>
+      <main id="conteudo" tabIndex={-1}>
         <h1 className="app__title">NewsExplorer — Etapa 1</h1>
         <SearchBar onSearch={handleSearch} />
-        <div style={{margin:'16px 0'}}>
+        <div className="demo-actions">
           <Button variant="ghost" onClick={()=> setOpenDemo(true)}>Abrir Modal de Exemplo</Button>
         </div>
-        <section className="results">
+        <section className="results" aria-live="polite" aria-label="Resultados da busca">
           {sample.map((a,i)=> <Card key={i} article={a} />)}
         </section>
       </main>
+      <footer className="app__footer" role="contentinfo">
+        <small>&copy; {new Date().getFullYear()} NewsExplorer Demo</small>
+      </footer>
       <Modal open={openDemo} onClose={()=> setOpenDemo(false)} title="Demo UI Kit">
         <p style={{marginTop:0}}>Este modal demonstra foco inicial, trap de foco, fechamento por ESC, clique fora e botão fechar.</p>
         <form onSubmit={(e)=>{e.preventDefault(); alert('Form enviado (demo).');}} noValidate>
