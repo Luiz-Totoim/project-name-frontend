@@ -1,0 +1,3 @@
+.header{display:flex;justify-content:space-between;align-items:center;padding:12px 0}
+.header__brand{font-weight:700}
+.header__nav a{margin-left:12px;color:inherit;text-decoration:none}
