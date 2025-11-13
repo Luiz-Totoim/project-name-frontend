@@ -6,6 +6,7 @@ import Modal from './components/Modal';
 import Button from './components/Button';
 import Preloader from './components/Preloader';
 import { fetchNews } from './services/newsApi';
+import { logger } from './utils/logger';
 import { VISIBLE_CHUNK } from './config/constants';
 import './App.css';
 
@@ -45,7 +46,7 @@ export default function App() {
       }
     } catch (err) {
       if(err.name !== 'AbortError') {
-        console.error(err);
+        logger.error(err);
         setError(err.message || 'Erro ao buscar dados');
       }
     } finally {

@@ -1,4 +1,5 @@
 import { API_BASE, DEFAULT_PAGE_SIZE } from '../config/constants';
+import { logger } from '../utils/logger';
 
 function buildUrl(query){
   const params = new URLSearchParams({
@@ -26,7 +27,7 @@ export async function fetchNews(query, { signal } = {}) {
   if(!query) return [];
   const apiKey = process.env.REACT_APP_NEWS_API_KEY;
   if(!apiKey){
-    console.warn('API key ausente. Configure REACT_APP_NEWS_API_KEY no seu .env. Retornando mock.');
+    logger.warn('API key ausente. Configure REACT_APP_NEWS_API_KEY no seu .env. Retornando mock.');
     return [
       { title: 'Configure sua chave REACT_APP_NEWS_API_KEY', description: 'Sem chave real, exibindo dados mock.', source: { name: 'Local' }, url: 'https://example.com', urlToImage: '', publishedAt: new Date().toISOString() }
     ];
