@@ -6,6 +6,7 @@ import './Modal.css';
  */
 export default function Modal({ open, onClose, title, children }) {
   const panelRef = useRef(null);
+  const focusTimeoutRef = useRef(null);
 
   useEffect(() => {
     function onKey(e) {
@@ -28,14 +29,20 @@ export default function Modal({ open, onClose, title, children }) {
     if (open) {
       document.addEventListener('keydown', onKey);
       // Foco inicial
-      setTimeout(() => {
+      focusTimeoutRef.current = setTimeout(() => {
         if (panelRef.current) {
           const autoFocus = panelRef.current.querySelector('[data-autofocus]');
           (autoFocus || panelRef.current).focus();
         }
       }, 10);
     }
-    return () => document.removeEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      if (focusTimeoutRef.current) {
+        clearTimeout(focusTimeoutRef.current);
+        focusTimeoutRef.current = null;
+      }
+    };
   }, [open, onClose]);
 
   if (!open) return null;

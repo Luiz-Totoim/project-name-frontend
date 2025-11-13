@@ -6,6 +6,7 @@ import Modal from './components/Modal';
 import Button from './components/Button';
 import Preloader from './components/Preloader';
 import { fetchNews } from './services/newsApi';
+import { logger } from './utils/logger';
 import { VISIBLE_CHUNK } from './config/constants';
 import './App.css';
 
@@ -16,6 +17,17 @@ export default function App() {
   const abortRef = React.useRef();
   const [openDemo, setOpenDemo] = React.useState(false);
   const [visibleCount, setVisibleCount] = React.useState(VISIBLE_CHUNK);
+  const visibleItems = React.useMemo(() => articles.slice(0, visibleCount), [articles, visibleCount]);
+
+  // Boas práticas: abortar requisição pendente ao desmontar o componente
+  React.useEffect(() => {
+    return () => {
+      if (abortRef.current && typeof abortRef.current.abort === 'function') {
+        abortRef.current.abort();
+        abortRef.current = null;
+      }
+    };
+  }, []);
 
   async function handleSearch(q){
     if(!q) return; // validação já acontece em SearchBar
@@ -34,7 +46,7 @@ export default function App() {
       }
     } catch (err) {
       if(err.name !== 'AbortError') {
-        console.error(err);
+        logger.error(err);
         setError(err.message || 'Erro ao buscar dados');
       }
     } finally {
@@ -55,7 +67,7 @@ export default function App() {
         {loading && <Preloader />}
         {error && !loading && <div className="results__status" role="alert">{error}</div>}
         <section className="results" aria-live="polite" aria-label="Resultados da busca">
-          {!loading && !error && articles.slice(0, visibleCount).map((a,i)=> <Card key={i} article={a} />)}
+          {!loading && !error && visibleItems.map((a,i)=> <Card key={i} article={a} />)}
         </section>
         {!loading && !error && articles.length > 0 && (
           <div className="results__count" aria-label="Total de resultados">{articles.length} resultado(s)</div>
