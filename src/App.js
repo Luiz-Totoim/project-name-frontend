@@ -16,6 +16,7 @@ export default function App() {
   const abortRef = React.useRef();
   const [openDemo, setOpenDemo] = React.useState(false);
   const [visibleCount, setVisibleCount] = React.useState(VISIBLE_CHUNK);
+  const visibleItems = React.useMemo(() => articles.slice(0, visibleCount), [articles, visibleCount]);
 
   async function handleSearch(q){
     if(!q) return; // validação já acontece em SearchBar
@@ -55,7 +56,7 @@ export default function App() {
         {loading && <Preloader />}
         {error && !loading && <div className="results__status" role="alert">{error}</div>}
         <section className="results" aria-live="polite" aria-label="Resultados da busca">
-          {!loading && !error && articles.slice(0, visibleCount).map((a,i)=> <Card key={i} article={a} />)}
+          {!loading && !error && visibleItems.map((a,i)=> <Card key={i} article={a} />)}
         </section>
         {!loading && !error && articles.length > 0 && (
           <div className="results__count" aria-label="Total de resultados">{articles.length} resultado(s)</div>
