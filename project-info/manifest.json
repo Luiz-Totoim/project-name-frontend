@@ -1,0 +1,10 @@
+{
+  "project_name": "NewsExplorer (frontend)",
+  "created_at": "2025-11-13T00:00:00",
+  "summary": "Front-end para pesquisar notícias via News API e salvar artigos no perfil do usuário. Páginas: busca e itens salvos.",
+  "screenshots_list_file": "screenshots.txt",
+  "screenshots_count": 54,
+  "source_paths_note": "A lista completa de caminhos está em screenshots.txt",
+  "notes": "Copie as imagens localmente para project-info/images usando os comandos PowerShell no README se quiser tê-las no workspace.",
+  "contact": null
+}
