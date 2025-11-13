@@ -13,14 +13,12 @@ export default function App() {
   const [articles, setArticles] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState('');
-  const [lastQuery, setLastQuery] = React.useState('');
   const abortRef = React.useRef();
   const [openDemo, setOpenDemo] = React.useState(false);
   const [visibleCount, setVisibleCount] = React.useState(VISIBLE_CHUNK);
 
   async function handleSearch(q){
     if(!q) return; // validação já acontece em SearchBar
-    setLastQuery(q);
     setError('');
     setLoading(true);
     setArticles([]);
