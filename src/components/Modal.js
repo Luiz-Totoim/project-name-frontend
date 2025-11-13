@@ -42,14 +42,15 @@ export default function Modal({ open, onClose, title, children }) {
   return (
     <div
       className="modal__overlay"
-      role="dialog"
-      aria-modal="true"
-      aria-label={title || 'Modal'}
+      role="button"
+      tabIndex={0}
+      aria-label="Fechar modal clicando fora"
       onClick={(e) => {
         if (e.target.classList.contains('modal__overlay')) onClose && onClose();
       }}
+      onKeyDown={(e)=>{ if(e.key==='Enter' || e.key===' ') { e.preventDefault(); onClose && onClose(); } }}
     >
-      <div className="modal__panel" ref={panelRef} tabIndex={-1}>
+      <div className="modal__panel" ref={panelRef} tabIndex={-1} role="dialog" aria-modal="true" aria-label={title || 'Modal'}>
         <header className="modal__header">
           <h3 className="modal__title">{title}</h3>
           <button className="modal__close" aria-label="Fechar" onClick={onClose}>×</button>

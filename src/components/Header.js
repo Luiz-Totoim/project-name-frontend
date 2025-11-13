@@ -6,8 +6,8 @@ export default function Header(){
     <header className="header">
       <div className="header__brand">NewsExplorer</div>
       <nav className="header__nav">
-        <a href="#">Início</a>
-        <a href="#">Itens salvos</a>
+        <a href="/">Início</a>
+        <a href="/saved">Itens salvos</a>
       </nav>
     </header>
   );
