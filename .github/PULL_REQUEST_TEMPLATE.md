@@ -1,20 +1,39 @@
-## O que foi feito
+## Resumo
+Descreva brevemente as mudanças desta PR.
 
-- Adicionado diretório `project-info` com:
-  - `screenshots.txt` — lista de caminhos das capturas fornecidas
-  - `README_pt-BR.md` — resumo do projeto e instruções
-  - `manifest.json` — metadados do projeto
+## Tipo de mudança
+- [ ] Feature
+- [ ] Fix
+- [ ] Docs
+- [ ] Chore
 
-## Por que
-Organizar as informações iniciais do projeto para a primeira entrega.
+## Checklist de critérios (marque o que esta PR cobre)
+- [ ] Etapa 1 — Marcação e JSX (HTML semântico, components)
+- [ ] Etapa 1 — UI kit (botões, modais, validações)
+- [ ] Etapa 1 — Responsividade e acessibilidade (aria, foco, grid)
+- [ ] Etapa 2 — Conexão com API e lógica React
+- [ ] Etapa 2 — Paginação “Mostrar mais”
+- [ ] Lint/Prettier sem erros
+- [ ] Testes básicos de componentes
+- [ ] Documentação atualizada (README)
+- [ ] Boas práticas (constantes, cleanup, hooks)
+- [ ] Performance (lazy images, CSS)
+- [ ] Deploy configurado
 
 ## Como testar
-1. Clonar o repositório
-2. Acessar a branch `feat/project-info`
-3. Conferir o diretório `project-info`
+Passos concisos para validar as mudanças:
+1. `npm install`
+2. Criar `.env` baseado em `.env.example`
+3. `npm start` e validar fluxo alterado
+4. Opcional: `npm test` e `npm run lint`
+
+## Verificações
+- [ ] Build local OK (`npm run build`)
+- [ ] Lint OK (`npm run lint`)
+- [ ] Testes OK (`npm test`)
+- [ ] Branding OK (`npm run check:branding`)
 
 ## Notas
-- As imagens em si ainda não foram copiadas para o workspace; `screenshots.txt` contém os caminhos locais.
-- Se desejar, posso criar um script PowerShell para copiar os arquivos listados em `screenshots.txt` para `project-info/images`.
+Inclua observações relevantes, decisões de design e pendências.
 
 /cc @Luiz-Totoim
