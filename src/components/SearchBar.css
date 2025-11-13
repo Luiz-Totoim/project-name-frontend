@@ -1,0 +1,5 @@
+.searchbar{margin:16px 0}
+.searchbar__inner{display:flex;gap:8px}
+.searchbar__input{flex:1;padding:8px;border:1px solid #ddd;border-radius:6px}
+.searchbar__btn{background:#2563eb;color:#fff;border:none;padding:8px 14px;border-radius:6px}
+.searchbar__label{display:none}
