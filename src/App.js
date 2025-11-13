@@ -18,6 +18,16 @@ export default function App() {
   const [visibleCount, setVisibleCount] = React.useState(VISIBLE_CHUNK);
   const visibleItems = React.useMemo(() => articles.slice(0, visibleCount), [articles, visibleCount]);
 
+  // Boas práticas: abortar requisição pendente ao desmontar o componente
+  React.useEffect(() => {
+    return () => {
+      if (abortRef.current && typeof abortRef.current.abort === 'function') {
+        abortRef.current.abort();
+        abortRef.current = null;
+      }
+    };
+  }, []);
+
   async function handleSearch(q){
     if(!q) return; // validação já acontece em SearchBar
     setError('');
