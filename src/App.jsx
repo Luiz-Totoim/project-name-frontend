@@ -1,11 +1,15 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
+import { useAuth } from './contexts/AuthContext';
+import { getCurrentUser } from './services/backendApi';
+import { createArticle as saveArticle } from './services/backendApi';
 import Header from './components/Header';
 import SearchBar from './components/SearchBar';
 import Card from './components/Card';
 import Modal from './components/Modal';
 import Button from './components/Button';
 import Preloader from './components/Preloader';
+import AuthModal from './components/AuthModal';
 import Saved from './pages/Saved';
 import { fetchNews } from './services/newsApi';
 import { logger } from './utils/logger';
@@ -13,9 +17,11 @@ import { VISIBLE_CHUNK } from './config/constants';
 import './App.css';
 
 function Home() {
+  const { token, currentUser } = useAuth();
   const [articles, setArticles] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState('');
+  const [keyword, setKeyword] = React.useState('');
   const abortRef = React.useRef();
   const [openDemo, setOpenDemo] = React.useState(false);
   const [visibleCount, setVisibleCount] = React.useState(VISIBLE_CHUNK);
@@ -36,6 +42,7 @@ function Home() {
     setError('');
     setLoading(true);
     setArticles([]);
+    setKeyword(q);
     setVisibleCount(VISIBLE_CHUNK);
     if (abortRef.current) abortRef.current.abort();
     const controller = new AbortController();
@@ -56,6 +63,24 @@ function Home() {
     }
   }
 
+  async function handleSave(article) {
+    if (!token) return;
+    try {
+      await saveArticle(token, {
+        keyword,
+        title: article.title,
+        text: article.description || article.content || '',
+        date: article.publishedAt,
+        source: article.source?.name || 'Unknown',
+        link: article.url,
+        image: article.urlToImage || '',
+      });
+      alert('Artigo salvo!');
+    } catch (err) {
+      alert(err.message || 'Erro ao salvar artigo');
+    }
+  }
+
   return (
     <>
       <main id="conteudo" tabIndex={-1}>
@@ -73,7 +98,11 @@ function Home() {
           </div>
         )}
         <section className="results" aria-live="polite" aria-label="Resultados da busca">
-          {!loading && !error && visibleItems.map((a, i) => <Card key={i} article={a} />)}
+          {!loading &&
+            !error &&
+            visibleItems.map((a, i) => (
+              <Card key={i} article={a} onSave={currentUser ? handleSave : null} />
+            ))}
         </section>
         {!loading && !error && articles.length > 0 && (
           <div className="results__count" aria-label="Total de resultados">
@@ -133,12 +162,30 @@ function Home() {
 }
 
 export default function App() {
+  const { token, setCurrentUser, setIsLoading } = useAuth();
+  const [authModalOpen, setAuthModalOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!token) {
+      setIsLoading(false);
+      return;
+    }
+
+    getCurrentUser(token)
+      .then((user) => setCurrentUser(user))
+      .catch(() => {
+        localStorage.removeItem('jwt');
+        setCurrentUser(null);
+      })
+      .finally(() => setIsLoading(false));
+  }, [token, setCurrentUser, setIsLoading]);
+
   return (
     <div className="app">
       <a href="#conteudo" className="skiplink">
         Ir para conteúdo
       </a>
-      <Header />
+      <Header onLoginClick={() => setAuthModalOpen(true)} />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/saved" element={<Saved />} />
@@ -146,6 +193,7 @@ export default function App() {
       <footer className="app__footer" role="contentinfo">
         <small>&copy; {new Date().getFullYear()} NewsExplorer Demo</small>
       </footer>
+      <AuthModal open={authModalOpen} onClose={() => setAuthModalOpen(false)} />
     </div>
   );
 }
